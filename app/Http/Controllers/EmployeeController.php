@@ -19,6 +19,8 @@ class EmployeeController extends Controller
 
       $username = $request->username;
       $password = $request->password;
+      
+      $encpassword = Hash::make($password);
 
       $user = Employee::where('username', $username)->first();
 
@@ -37,11 +39,11 @@ class EmployeeController extends Controller
         $firstname = $user->first_name;
         $lastname = $user->last_name;
         $mobile = $user->mobile;
-        $user_password = $user->password;
+        $user_password = $user->encpassword;
         $employeeid = $user->employeeid;
         $photo = $user->photo;
        
-        if($username == $user_username && $password == $user_password){
+        if($username == $user_username && $encpassword == $user_password){
 
          session()->put('logged_email', $user_email);
          session()->put('user_username', $user_username);
