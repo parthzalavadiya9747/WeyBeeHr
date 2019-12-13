@@ -17,6 +17,7 @@ use Illuminate\Validation\Rule;
 use Helper;
 use DB;
 use Session;
+use Datatables;
 
 class HRController extends Controller
 {
@@ -549,10 +550,11 @@ class HRController extends Controller
 	}
 
 	public function searchemployeelog(Request $request){
+		if ($request->ajax()) {
 
-		$employeeid = Input::get('employeeid');
-		$year = Input::get('year');
-		$month = Input::get('month');
+		$employeeid = $request->employeeid;
+		$year = $request->year;
+		$month = $request->month;
 
 		if(!empty($employeeid) || !empty($year) || !empty($month)){
 
@@ -588,21 +590,34 @@ class HRController extends Controller
 		
 		$searchparameter = ['employeeid' => $employeeid, 'month' => $month, 'year' => $year];
 
-		$employeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->orderBy('checkout', 'asc')->paginate(10);
+		$employeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->orderBy('checkout', 'asc')->get();
 
-		$employee = Employee::where('status', 1)->get()->all();
+		return datatables()->of($employeelog)
+		->editColumn('checkout', function($employeelog){
+			if(!empty($employeelog->checkout)){
+				return $employeelog->checkout;
+			}else{
+				if(session()->get('logged_role') == 'Admin'){
+
+					return "<a href=".route('addpunch', $employeelog->emplogid)." class='btn btn-danger'>Miss</a>";
+				}else{
+					return "<a class='btn btn-danger' disabled title='Dare to edit this'>Miss</a>";
+				}
+			}
+
+		})->escapeColumns([])
+		->make(true);
+
+		//$employee = Employee::where('status', 1)->get()->all();
 
 
-		$employeelog->appends(array('employeeid' => $employeeid, 'year' => $year, 'month' => $month));
+		//$employeelog->appends(array('employeeid' => $employeeid, 'year' => $year, 'month' => $month));
 
 		
-		return view('hr.employeelog.viewemployeelog')->with(compact('employeeid', 'year', 'month', 'employeelog', 'employee', 'searchparameter'));
+		//return view('hr.employeelog.viewemployeelog')->with(compact('employeeid', 'year', 'month', 'employeelog', 'employee', 'searchparameter'));
 
 		}
-
-		return redirect()->route('employeelog');
-
-
+	}
 	}
 
 
@@ -621,16 +636,6 @@ class HRController extends Controller
 
 			$checkout = $request->punchtime;
 			$checkin = $log->checkin;
-
-
-			if($checkout <= $checkin){
-
-				Session::flash('message', 'Please enter valid Punchtime');
-	    		Session::flash('alert-type', 'error');
-
-
-				return redirect()->back()->withInput();
-			}
 
 			DB::beginTransaction();
 			try {
@@ -667,6 +672,49 @@ class HRController extends Controller
 
 
 	}
+
+
+	public function addemppunch(Request $request){
+
+		$employee = Employee::where('status', 1)->get()->all();
+
+
+		if($request->isMethod('POST')){
+
+			$request->validate([
+
+				'employeeid' => 'required',
+				'punchdate' => 'required|date',
+				'checkin' => 'required',
+				'checkin' => 'required',
+
+			]);
+
+			$emppunch = new EmployeeLog();
+			$emppunch->userid = $request->employeeid;
+			$emppunch->punchdate = $request->punchdate;
+			$emppunch->checkin = $request->checkin;
+			$emppunch->checkout = $request->checkin;
+			$emppunch->actionby = session()->get('admin_id');
+
+			$emppunch->save();
+
+			Session::flash('message', 'Punch is added successfully');
+			Session::flash('alert-type', 'success');
+
+
+			return redirect()->route('employeelog');
+
+
+		}
+
+
+
+
+		return view('hr.employeelog.addemployeepunch')->with(compact('employee'));
+
+	}
+
 
 
 	//////////////////////////////////////////// Employee Log End   /////////////////////////////////////////////
@@ -790,9 +838,10 @@ class HRController extends Controller
 
 
 
-			$totalminute += $difference;
+			$totalminute += abs($difference);
 
 		}
+		
 		$totalhour_dispaly_model = round($totalminute/60);
 		
 		$totalminute_dispaly = $totalminute;

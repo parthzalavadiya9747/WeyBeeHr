@@ -44,6 +44,7 @@ class EmployeeController extends Controller
         if($username == $user_username && $password == $user_password){
 
          session()->put('logged_email', $user_email);
+         session()->put('user_username', $user_username);
          session()->put('logged_role', $role);
          session()->put('logged_firstname', $firstname);
          session()->put('logged_lastname', $lastname);
@@ -51,7 +52,11 @@ class EmployeeController extends Controller
          session()->put('admin_id', $employeeid);
          session()->put('photo', $photo);
 
-         return redirect()->to('dashboard');
+         if($role == 'Admin'){
+            return redirect()->to('dashboard');
+         }else{
+            return redirect()->to('empdashboard');
+         }
 
         }else{
 
@@ -61,7 +66,7 @@ class EmployeeController extends Controller
 
         }
         }else{
-           return back()->with('message', 'Email not found');
+           return back()->with('message', 'Username not found');
         }
     }
 
@@ -134,7 +139,7 @@ class EmployeeController extends Controller
     			'dob' => 'nullable|date',
     			'mobileno' => 'required|digits_between:1,10|unique:employee,mobileno',
     			'password' => 'required|min:6',
-    			'accountNo' => 'required|numeric|digits_between:1,20',
+    			'accountNo' => 'required|numeric|digits_between:1,16',
     			'accountName' => 'required|max:255',
     			'IFSCcode' => 'required|max:11',
     			'BankName' => 'required|max:255',

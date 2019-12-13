@@ -20,16 +20,20 @@ Route::get('/', function () {
 
 Route::any('loginprocess', 'EmployeeController@loginprocess')->name('loginprocess');
 Route::any('logout', 'EmployeeController@logout')->name('logout');
+
+
 /////////////////////////////////////////////////////// Login Route End///////////////////////////////////////////////////////////////////
-Route::group(['middleware'=>'Islogin'], function(){
+
 ////////////////////////////////////////////////////////// common route start /////////////////////////////////////////////////////////////
-Route::any('dashboard', 'EmployeeController@dashboard')->name('dashboard');
 Route::get('notification', 'CommonController@notification');
 Route::get('method', 'CommonController@method');
 Route::any('getcity', 'CommonController@getcity')->name('getcity');
 ////////////////////////////////////////////////////////// common route end  /////////////////////////////////////////////////////////////
 
+Route::group(['middleware'=>['Islogin', 'isadmin']], function(){
 
+
+Route::any('dashboard', 'EmployeeController@dashboard')->name('dashboard');
 ////////////////////////////////////////////////////////// Department route start /////////////////////////////////////////////////////////////
 Route::any('department', 'DepartmentController@department')->name('department');
 Route::any('viewdepartment', 'DepartmentController@viewdepartment')->name('viewdepartment');
@@ -77,9 +81,10 @@ Route::any('searchemployeeaccount', 'HRController@searchemployeeaccount')->name(
 
 ///////////////////////////// Employee log start /////////////////////////////////////
 Route::any('employeelog', 'HRController@employeelog')->name('employeelog');
-Route::any('searchemployeelog', 'HRController@searchemployeelog')->name('searchemployeelog');
+
 Route::any('storelog', 'HRController@storelog')->name('storelog');
 Route::any('addpunch/{id}', 'HRController@addpunch')->name('addpunch');
+Route::any('addemppunch', 'HRController@addemppunch')->name('addemppunch');
 ///////////////////////////// Employee log end ///////////////////////////////////////
 
 ///////////////////////////////////// Employee Leave start //////////////////////////////////////////////////////////////
@@ -146,5 +151,35 @@ Route::any('getcontractdate', 'EnrollController@getcontractdate')->name('getcont
 Route::any('setcontractdate', 'EnrollController@setcontractdate')->name('setcontractdate');
 Route::any('checkdevicecount', 'EnrollController@checkdevicecount')->name('checkdevicecount');
 Route::any('emplog', 'EnrollController@emplog')->name('emplog');
+Route::any('emplogajax', 'EnrollController@emplogajax')->name('emplogajax');
+Route::any('searchemployeelog', 'HRController@searchemployeelog')->name('searchemployeelog');
 ///////////////////////////////////////////////////// enroll employee /////////////////////////////////////////////////
+
 });
+
+//////////////////////////////////////////////////////// Employee Route start /////////////////////////////////////////////////
+Route::group(['middleware'=>['Islogin', 'isemployee']], function(){
+
+
+Route::any('empdashboard', 'EmployeePortal@empdashboard')->name('empdashboard');
+Route::any('empprofile', 'EmployeePortal@empprofile')->name('empprofile');
+Route::any('emplogemp', 'EmployeePortal@emplogemp')->name('emplogemp');
+Route::any('searchemployeelogemp', 'EmployeePortal@searchemployeelogemp')->name('searchemployeelogemp');
+
+});
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////// Employee Route end //////////////////////////////////////////////////
+
+
+
+
+
+

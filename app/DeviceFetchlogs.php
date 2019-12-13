@@ -18,7 +18,7 @@ class DeviceFetchlogs extends Model
     }
 
     public function emp(){
-    	return $this->hasOne('App\Employee', 'employeeid', 'detail1');
+    	return $this->hasOne('App\Employee', 'employeeid', 'detail1')->select(array('first_name', 'last_name', 'mobileno'));
 
     }
 }

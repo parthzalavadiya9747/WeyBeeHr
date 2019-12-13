@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Session;
 
-class Islogin
+class isemployee
 {
     /**
      * Handle an incoming request.
@@ -16,12 +16,12 @@ class Islogin
      */
     public function handle($request, Closure $next)
     {
-        if(empty(session()->get('user_username'))){
-            return redirect()->to('/');
+        if(session()->get('logged_role') == 'Employee'){
+            return $next($request);
         }
         else
         {
-            return $next($request);
+            return redirect()->to('/');
         }
     }
 }

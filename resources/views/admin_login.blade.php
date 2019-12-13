@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Weybee Solution</title>
+  <title>WeyBee Solution</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->  
-  <link rel="icon" type="image/png" href="{{asset('public/images/icons/favicon.ico')}}"/>
+ 
 
 <!--===============================================================================================-->
   <link rel="stylesheet" type="text/css" href="{{asset('public/css/util.css')}}">
@@ -16,7 +16,7 @@
 
 
 
-  <script src="{{ asset('public/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
 <style type="text/css">
   .alert{
     color: red;
@@ -86,22 +86,5 @@
       </div>
     </div>
   </div>
-
-  <!--
-          </script> -->
-  
-
-  
-
-
-<!-- /.login-box -->
-
-<!-- jQuery 3 -->
-<!-- <script src="../../bower_components/jquery/dist/jquery.min.js"></script>-->
-<!-- Bootstrap 3.3.7 -->
-<!-- <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
- --><!-- iCheck
-<script src="../../plugins/iCheck/icheck.min.js"></script> -->
-
 </body>
 </html>

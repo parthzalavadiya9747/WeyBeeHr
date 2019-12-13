@@ -983,44 +983,7 @@ class EnrollController extends Controller
 
         $employee  = Employee::all();
 
-        if($request->isMethod('post')){
-            
-
-            $employeeid = $request->employeeid;
-            $fromdate = !empty($request->fromdate) ? date('Y-m-d', strtotime($request->fromdate)) : '';
-            $todate = !empty($request->todate) ? date('Y-m-d', strtotime($request->todate)) : date('Y-m-d');
-            $query=[];
-            $query['employeeid']=$employeeid ;
-            $query['fromdate']=$fromdate ;
-            $query['todate']=$todate;
-
-            $fetchlog =  DeviceFetchlogs::with('emp');
-            
-            if($employeeid){
-
-                $fetchlog->where('detail1','=',$employeeid);
-
-            }
-
-            if(!$fromdate){
-
-                $fetchlog->whereBetween('date', [$fromdate, $todate]);
-
-            }
-
-            if(!$todate){
-
-                $fetchlog->whereBetween('date', [$fromdate, $todate]);
-
-            }
-
-            
-            $fetchlog = $fetchlog->where('eventid', 101)->orderBy('deviceeventid', 'desc')->paginate(10)->appends('query');
-          
-            return view('device.emplogs')->with(compact('fetchlog', 'employee', 'query'));
-
-        }
-
+       
 
 
 
@@ -1029,6 +992,58 @@ class EnrollController extends Controller
         return view('device.emplogs')->with(compact('employee'));
 
 
+    }
+
+    public function emplogajax(Request $request){
+
+        if ($request->ajax()) {
+
+            $employeeid = $request->employeeid;
+            $fromdate = !empty($request->fromdate) ? date('Y-m-d', strtotime($request->fromdate)) : '';
+            $todate = !empty($request->todate) ? date('Y-m-d', strtotime($request->todate)) : date('Y-m-d');
+
+
+           /* echo "employeeid = ".$employeeid;
+            echo "fromdate = ".$fromdate;
+            echo "todate = ".$todate;exit;*/
+
+           /* $query=[];
+            $query['employeeid']=$employeeid ;
+            $query['fromdate']=$fromdate ;
+            $query['todate']=$todate;*/
+
+            $fetchlog = DeviceFetchlogs::join('employee', 'devicefetchlogs.detail1', 'employee.employeeid');
+
+            if($employeeid){
+
+                $fetchlog->where('devicefetchlogs.detail1','=',$employeeid);
+
+            }
+
+            if(!empty($fromdate)){
+                
+                $fetchlog->whereBetween('devicefetchlogs.date', [$fromdate, $todate]);
+
+            }
+
+            if(!empty($todate)){
+            
+
+                $fetchlog->whereBetween('devicefetchlogs.date', [$fromdate, $todate]);
+
+            }
+      
+
+            $fetchlog = $fetchlog->where('eventid', 101)->select(DB::raw("CONCAT(employee.first_name,employee.last_name) AS fullname"), 'employee.mobileno', 'devicefetchlogs.date', 'devicefetchlogs.time')->orderBy('deviceeventid', 'desc')->get();
+/*
+            dd($fetchlog->count());*/
+            
+
+
+            return datatables()->of($fetchlog)
+            ->make(true);
+        }
+          
     }
 
 }

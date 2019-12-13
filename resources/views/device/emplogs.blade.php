@@ -3,7 +3,9 @@
 @section('title', 'View Employee')
 
 @push('css')
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+
+ <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+
 
 <style type="text/css">
 	.form-group{
@@ -29,9 +31,7 @@
 	</div>
 </section>
 <?php 
-	$empid = !empty($query['employeeid']) ? $query['employeeid'] : 0;
-	$fromdate = !empty($query['fromdate']) ? $query['fromdate'] : 0;
-	$todate = !empty($query['todate']) ? $query['todate'] : 0;
+	
 ?>
 <section class="content">
 	<div class="row">
@@ -42,7 +42,7 @@
 				</div>
 				<div class="box-body">
 					<div class="col-md-12">
-						<form method="post" class="form-inline" action="{{ route('emplog') }}">
+						<div  class="form-inline">
 							@csrf
 							<div class="form-group">
 								<label>Employee:</label>
@@ -50,7 +50,7 @@
 									@if(!empty($employee))
 									<option value="">--Please Select Employee--</option>
 									@foreach($employee as $emp)
-									<option value="{{ $emp->employeeid }}" @if($empid == $emp->employeeid) selected="" @endif>{{ ucfirst($emp->first_name) }} {{ ucfirst($emp->last_name) }}</option>
+									<option value="{{ $emp->employeeid }}">{{ ucfirst($emp->first_name) }} {{ ucfirst($emp->last_name) }}</option>
 									@endforeach
 									@else
 									<option value="">--No Employee available--</option>
@@ -64,7 +64,7 @@
 									<option value="">--Select Mobileno--</option>
 									@if(!empty($employee))
 									@foreach($employee as $emp)
-									<option value="{{ $emp->employeeid }}" @if($empid == $emp->employeeid) selected="" @endif>{{ $emp->mobileno }}</option>
+									<option value="{{ $emp->employeeid }}" >{{ $emp->mobileno }}</option>
 									@endforeach
 									@endif
 								</select>
@@ -72,59 +72,39 @@
 							</div>
 							<div class="form-group">
 								<label>From Date:</label>
-								<input type="date" name="fromdate" class="form-control" value="{{ $fromdate }}">
+								<input type="date" name="fromdate" id="fromdate" class="form-control" >
 
 							</div>
 							<div class="form-group">
 								<label>To Date:</label>
-								<input type="date" name="todate" class="form-control" value="{{ $todate }}">
+								<input type="date" name="todate" id="todate" class="form-control">
 
 							</div>
 							<div class="form-group" >
-								<button type="submit" class="btn btn-primary bg-orange" style="margin-top: 25px;">Submit</button>
+								<button id="submit" class="btn btn-primary bg-orange" style="margin-top: 25px;">Submit</button>
 							</div>
-						</form>
+						</div>
 					</div>
 					<br/>
-					<table class="table table-responsive table-hover">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Mobile No</th>
-								<th>Punchdate</th>
-								<th>Punchtime</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if(!empty($fetchlog))
-								@foreach($fetchlog as $log)
-								<tr>
-									<td>
-										<?php 
-										$fname = !empty($log->emp->first_name) ? ucfirst($log->emp->first_name) : '';
-										$lname = !empty($log->emp->last_name) ? ucfirst($log->emp->last_name) : '';
-										?>
-										{{ $fname }} {{ $lname }}
-									</td>
-									<td>{{ $log->emp->mobileno }}</td>
-									<td>{{ date('d-m-Y', strtotime($log->date)) }}</td>
-									<td>{{ $log->time }}</td>
-								</tr>
-								@endforeach
-							@else
-							<tr>
-								<td><center>No Data Found</center></td>
-							</tr>
-							@endif
-						</tbody>
-					</table>
-					@if(!empty($fetchlog))
-					@if(isset($query))
-					<center>{{ $fetchlog->appends($query)->links() }}</center>
-					@else
-					<center>{{ $fetchlog->links() }}</center>
-					@endif
-					@endif
+					<div class="row">
+						
+						<div class="col-md-12">
+							<table class="table table-responsive table-hover" id="emp_table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Mobile No</th>
+										<th>Punchdate</th>
+										<th>Punchtime</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+						</div>
+						
+					</div>
 				</div>
 			</div>
 		</div>
@@ -140,6 +120,8 @@
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
+
+
 <script type="text/javascript">
 	$(document).ready(function(){
 
@@ -150,6 +132,32 @@
                $('#mobileno option[value='+empid+']').prop('selected', true);
            }
        });
+
+		$('#submit').click(function(){
+			$('#emp_table').DataTable({
+				processing: true,
+				serverSide: true,
+				destroy: true,
+				ajax: {
+					url: "{{ route('emplogajax') }}",
+					data : function(d){
+						d.employeeid = $('#employeeid').val(),
+						d.fromdate = $('#fromdate').val(),
+						d.todate = $('#todate').val()
+					}
+				},
+				columns: [
+				{data: 'fullname', name: 'fullname'},
+				{data: 'mobileno', name: 'mobileno'},
+				{data: 'date', name: 'date'},
+				{data: 'time', name: 'time'},
+				]
+			});
+		});
+
+
+
+
 
 	});
 </script>

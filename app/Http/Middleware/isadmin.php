@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Session;
 
-class Islogin
+class isadmin
 {
     /**
      * Handle an incoming request.
@@ -16,12 +16,13 @@ class Islogin
      */
     public function handle($request, Closure $next)
     {
-        if(empty(session()->get('user_username'))){
-            return redirect()->to('/');
+        if(session()->get('logged_role') == 'Admin'){
+            return $next($request);
         }
         else
         {
-            return $next($request);
+            session()->flush();
+            return redirect()->to('/');
         }
     }
 }

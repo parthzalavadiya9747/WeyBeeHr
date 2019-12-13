@@ -163,6 +163,7 @@
                   </a>
                   <ul class="treeview-menu">
                      <li><a href="{{ route('employeelog') }}"><i class="fa fa-plus"></i> View Log</a></li>
+                     <li><a href="{{ route('addemppunch') }}"><i class="fa fa-plus"></i> Add Punch</a></li>
                   </ul>
                </li>
 

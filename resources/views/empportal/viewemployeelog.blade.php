@@ -1,4 +1,4 @@
-@extends('layout.mainlayout') 
+@extends('layout.emp_mainlayout') 
 
 @section('title', 'View Employee Log')
 
@@ -20,8 +20,8 @@
            <div class="row">
             <div class="col-md-12">
               <ol class="breadcrumb">
-                <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="{{ route('employeelog') }}">Employee Log</a></li>
+                <li><a href="{{ route('empdashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="#">Employee Log</a></li>
                 <li class="active">View Employee Log</li>
               </ol>
             </div>
@@ -45,11 +45,11 @@
                                                 @csrf
                                                 <div class="form-group">
                                                     
-                                                        <select  class="form-control span11 select2"title="Select Employee" data-live-search="true" data-selected-text-format="count"  data-actions-box="true"  data-header="Select Employee" required="" name="employeeid" id="employeeid" data-sear>
+                                                        <select  class="form-control span11 select2"title="Select Employee" data-live-search="true" data-selected-text-format="count"  data-actions-box="true"  data-header="Select Employee" required="" name="employeeid" id="employeeid" data-sear disabled="">
                                                            @if(!empty($employee))
                                                            <option value="">--Please Select Employee--</option>
                                                            @foreach($employee as $emp)
-                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $employeeid) selected="" @endif>{{ ucfirst($emp->first_name) }} {{ ucfirst($emp->last_name) }}</option>
+                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $empid) selected="" @endif>{{ ucfirst($emp->first_name) }} {{ ucfirst($emp->last_name) }}</option>
                                                            @endforeach
                                                            @endif
                                                         </select>
@@ -61,7 +61,7 @@
                                                             <option value="">--Select Mobileno--</option>
                                                            @if(!empty($employee))
                                                            @foreach($employee as $emp)
-                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $employeeid) selected="" @endif>{{ $emp->mobileno }}</option>
+                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $empid) selected="" @endif>{{ $emp->mobileno }}</option>
                                                            @endforeach
                                                            @endif
                                                         </select>
@@ -178,7 +178,7 @@
                 serverSide : true,
                 destroy : true,
                 ajax : {
-                    url : '{{ route('searchemployeelog') }}', 
+                    url : '{{ route('searchemployeelogemp') }}', 
                     data : function(d){
                         d.employeeid = $('#employeeid').val(),
                         d.year = $('#year').val(),

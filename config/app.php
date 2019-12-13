@@ -162,6 +162,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class,
+        
 
         /*
          * Package Service Providers...
@@ -228,6 +230,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Curl' => Ixudra\Curl\Facades\Curl::class,
         'Helper' => App\Helpers\Helper::class,
+        'Datatables' => Yajra\Datatables\Facades\Datatables::class,
+
 
     ],
 
