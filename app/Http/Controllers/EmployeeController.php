@@ -42,8 +42,10 @@ class EmployeeController extends Controller
         $user_password = $user->encpassword;
         $employeeid = $user->employeeid;
         $photo = $user->photo;
+
+        
        
-        if($username == $user_username && $encpassword == $user_password){
+        if($username == $user_username && Hash::check($password, $user_password)){
 
          session()->put('logged_email', $user_email);
          session()->put('user_username', $user_username);
