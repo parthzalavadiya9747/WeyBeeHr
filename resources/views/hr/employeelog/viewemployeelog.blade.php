@@ -108,7 +108,7 @@
                                         </div>
                                     </div>
                                     <div class="row mt-5"><br/>
-                                     @if (!isset($error))
+                                   
                                     <div class="col-md-12 ">
                                          <div class="box-body table-responsive no-padding">
                                             <table id="emplog" class="table table-bordered table-striped">
@@ -142,11 +142,6 @@
 
                                             </table>
                                         </div>
-                                             @if(!empty($employeelog))
-                                            <center>{!!  $employeelog->render() !!} </center>
-                                            @endif
-                                        </div> 
-                                        @endif
                                     </div>
                                 </div>
                                 <!-- /.box-body -->

@@ -45,17 +45,16 @@ class EmployeePortal extends Controller
 
     public function emplogemp(){
 
-        $employee = Employee::all();
-        $empid = session()->get('admin_id');
+        $employee = Employee::findOrFail(session()->get('admin_id'));
 
-        return view('empportal.viewemployeelog')->with(compact('employee', 'empid'));
+        return view('empportal.viewemployeelog')->with(compact('employee'));
     }
 
     public function searchemployeelogemp(Request $request){
 
         if ($request->ajax()) {
 
-        $employeeid = $request->employeeid;
+        $employeeid = session()->get('admin_id');
         $year = $request->year;
         $month = $request->month;
 

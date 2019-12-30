@@ -45,26 +45,12 @@
                                                 @csrf
                                                 <div class="form-group">
                                                     
-                                                        <select  class="form-control span11 select2"title="Select Employee" data-live-search="true" data-selected-text-format="count"  data-actions-box="true"  data-header="Select Employee" required="" name="employeeid" id="employeeid" data-sear disabled="">
-                                                           @if(!empty($employee))
-                                                           <option value="">--Please Select Employee--</option>
-                                                           @foreach($employee as $emp)
-                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $empid) selected="" @endif>{{ ucfirst($emp->first_name) }} {{ ucfirst($emp->last_name) }}</option>
-                                                           @endforeach
-                                                           @endif
-                                                        </select>
+                                                    <input type="text" name="employee" class="form-control" value="{{ ucfirst($employee->first_name) }} {{ ucfirst($employee->last_name) }}" readonly="">
                                                
                                                 </div>
                                                 <div class="form-group">
                                                    
-                                                        <select  class="form-control" name="mobile" id="mobileno" placeholder="Mobileno" disabled="" style="width: 240px !important;">
-                                                            <option value="">--Select Mobileno--</option>
-                                                           @if(!empty($employee))
-                                                           @foreach($employee as $emp)
-                                                                <option value="{{ $emp->employeeid }}" @if($emp->employeeid == $empid) selected="" @endif>{{ $emp->mobileno }}</option>
-                                                           @endforeach
-                                                           @endif
-                                                        </select>
+                                                   <input type="text" name="employee" class="form-control" value="{{ $employee->mobileno }}" readonly="">
                                                   
                                                 </div>
                                                 <div class="form-group">

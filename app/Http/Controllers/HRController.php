@@ -12,12 +12,15 @@ use App\EmployeeLog;
 use App\Salary;
 use App\EmployeeLeave;
 use App\MonthLeave;
+use App\ExcelExport;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Validation\Rule;
 use Helper;
 use DB;
 use Session;
 use Datatables;
+use App\Exports\EmployeeExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HRController extends Controller
 {
@@ -198,6 +201,8 @@ class HRController extends Controller
 			}
 
 			$day_in_month = cal_days_in_month(CAL_GREGORIAN,$cal_month,$year);
+
+			$workingdays = $day_in_month - $nonworgdayscount;
 
 			$holiday_cal = $day_in_month - $workingdays; 
 
@@ -593,6 +598,9 @@ class HRController extends Controller
 		$employeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->orderBy('checkout', 'asc')->get();
 
 		return datatables()->of($employeelog)
+		->editColumn('punchdate', function($employeelog){
+			return date('d-m-Y', strtotime($employeelog->punchdate));
+		})
 		->editColumn('checkout', function($employeelog){
 			if(!empty($employeelog->checkout)){
 				return $employeelog->checkout;
@@ -802,11 +810,20 @@ class HRController extends Controller
 		$fromdate = date('Y-m-d',strtotime("$year-$cal_month-01"));
 		$todate = date('Y-m-d',strtotime("$year-$cal_month-$day_in_month"));
 		
+		
 		$searchparameter = ['employeeid' => $employeeid, 'month' => $month, 'year' => $year];
+
+		$employee = Employee::where('status', 1)->get()->all();
+		$emptime = Employee::where('employeeid', $employeeid)->first();
+		$checkintime = $emptime->workinghourfrom1;
+		$checkouttime = $emptime->workinghourto1;
 
 		$employeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->where('checkout', null)->get()->all();
 
-		$employee = Employee::where('status', 1)->get()->all();
+		$lateemployeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->where(function($query) use ($checkintime, $checkouttime){
+			$query->where('checkin', '>', $checkintime)->orWhere('checkout', '<', $checkouttime);
+		})->get()->all();
+
 		$error = 1;
 		if(!empty($employeelog)){
 
@@ -818,12 +835,12 @@ class HRController extends Controller
 		}
 
 	
-		try {
+		/*try {*/
 
 		$employeelog = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->get()->all();
 
-
 		$employeelog_days = EmployeeLog::where('userid', $employeeid)->whereBetween('punchdate', [$fromdate, $todate])->groupBy('punchdate')->select('punchdate')->get()->all();
+		
 
 		$attenddays = count($employeelog_days);
 		
@@ -878,6 +895,8 @@ class HRController extends Controller
 		$empsalary = $empdata->salary;
 		$empworkinghour = $empdata->workinghour;
 
+		$Workindays = 0;
+		$holidays = 0;
 		$workingdays_data = WorkingDays::where('year', $year)->where('month', $month)->first();
 		if(!empty($workingdays_data)){
 			$Workindays = $workingdays_data->workingdays;
@@ -887,12 +906,13 @@ class HRController extends Controller
 			$holidays = 0;
 		}
 
-		$actualdays = $Workindays - $holidays;
+		$actualdays = $Workindays;
+		//dd($actualdays);
 
-		$leavedays_cal = $actualdays - $attenddays;
+		$leavedays_cal = $Workindays - $attenddays;
 
-		$totalworkinghour = $actualdays * $empworkinghour;
-		$empworkingminute = $actualdays * $empworkinghour * 60;
+		$totalworkinghour = $Workindays * $empworkinghour;
+		$empworkingminute = $Workindays * $empworkinghour * 60;
 		$totalminute = $attenddays * $empworkinghour * 60; 
 		$totalminutedisplay = $totalminute/60;
 
@@ -902,8 +922,9 @@ class HRController extends Controller
 		$takenleave = $Workindays - $attenddays;
 		
 		$totalattenddays = $Workindays - $takenleave;
+	
 		
-		$perdaysalary = ceil($empsalary/$actualdays);
+		$perdaysalary = ceil($empsalary/$Workindays);
 
 		$current_salary = round($perdaysalary * $totalattenddays);
 
@@ -913,9 +934,9 @@ class HRController extends Controller
 
 		$emploanamount = EmployeeAccount::where('employeeid', $employeeid)->orderBy('empaccountid', 'desc')->first();
 
-		return view('hr.salary.calculatesalary')->with(compact('attenddays', 'totalminute', 'totalhour', 'totaldays', 'givenleave', 'takenleave', 'empdata', 'empsalary', 'empworkinghour', 'total_hour', 'year', 'month', 'Workindays', 'holidays', 'empworkingminute', 'current_salary', 'employeeid', 'takenleave_display', 'actualdays', 'leavedays_cal', 'totalworkinghour', 'employeelog', 'totalminute_dispaly', 'totalhour_dispaly_model', 'emploanamount'));
+		return view('hr.salary.calculatesalary')->with(compact('attenddays', 'totalminute', 'totalhour', 'totaldays', 'givenleave', 'takenleave', 'empdata', 'empsalary', 'empworkinghour', 'total_hour', 'year', 'month', 'Workindays', 'holidays', 'empworkingminute', 'current_salary', 'employeeid', 'takenleave_display', 'Workindays', 'leavedays_cal', 'totalworkinghour', 'employeelog', 'totalminute_dispaly', 'totalhour_dispaly_model', 'emploanamount', 'lateemployeelog', 'actualdays'));
 
-	}  catch(\Exception $e) {
+	/*}  catch(\Exception $e) {
 
 		Helper::errormail('Hr', 'Calculate Salary', 'High');
 
@@ -924,7 +945,7 @@ class HRController extends Controller
 
 	if($success == false){
 		return redirect('dashboard');
-	}
+	}*/
 
 
 
@@ -1555,6 +1576,220 @@ class HRController extends Controller
 ///////////////////////////////////// Employee Leave End ////////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////// import punch /////////////////////////////////////////////////////////////
+	public function importpunch(Request $request){
 
+
+		$employee = Employee::where('status', 1)->get()->all();
+		
+		return view('hr.employeelog.importpunch')->with(compact('employee'));
+
+	}
+
+
+	public function downloaddemosheet(Request $request){
+		
+
+		if($request->isMethod('POST')){
+
+
+			$employeeid = $request->employeeid;
+			$month = $request->month;
+			$year = $request->year;
+			
+			ExcelExport::truncate();
+			/*$excel = ExcelExport::all();
+			if(!empty($excel)){
+				foreach($excel as $e){
+					ExcelExport::where('excelexportid', $e->excelexportid)->delete();
+				}
+			}*/
+			
+			$fullname = '';
+
+			if($employeeid && $month && $year){
+
+				$empdetail = Employee::where('employeeid', $employeeid)->first();
+				if(!empty($empdetail)){
+
+					$fullname = ucfirst($empdetail->first_name).' '.ucfirst($empdetail->last_name);
+				}
+
+				if($request->month == 'Janaury'){
+					$cal_month = 1;
+				}else if($request->month == 'February'){
+					$cal_month = 2;
+				}else if($request->month == 'March'){
+					$cal_month = 3;
+				}else if($request->month == 'April'){
+					$cal_month = 4;
+				}else if($request->month == 'May'){
+					$cal_month = 5;
+				}else if($request->month == 'June'){
+					$cal_month = 6;
+				}else if($request->month == 'July'){
+					$cal_month = 7;
+				}else if($request->month == 'August'){
+					$cal_month = 8;
+				}else if($request->month == 'September'){
+					$cal_month = 9;
+				}else if($request->month == 'October'){
+					$cal_month = 10;
+				}else if($request->month == 'November'){
+					$cal_month = 11;
+				}else{
+					$cal_month = 12;
+				}
+
+				$day_in_month = cal_days_in_month(CAL_GREGORIAN,$cal_month,$year);
+				$fromdate = date('Y-m-d',strtotime("$year-$cal_month-01"));
+				$todate = date('Y-m-d',strtotime("$year-$cal_month-$day_in_month"));
+
+				$export_array = [];
+
+				for($i = 1; $i<= $day_in_month; $i++){
+
+					$current_date = date('Y-m-d',strtotime("$year-$cal_month-$i"));
+					//dd($current_date);
+					$excel = new ExcelExport();
+					$excel->employeeid = $employeeid;
+					$excel->employeename = ucfirst($empdetail->first_name).' '.ucfirst($empdetail->last_name);
+					$excel->date = $current_date;
+					$excel->checkin = '';
+					$excel->checkout = '';
+					$excel->save();
+
+					$excel = new ExcelExport();
+					$excel->employeeid = $employeeid;
+					$excel->employeename = ucfirst($empdetail->first_name).' '.ucfirst($empdetail->last_name);
+					$excel->date = $current_date;
+					$excel->checkin = '';
+					$excel->checkout = '';
+					$excel->save();
+					
+
+
+				}
+				
+				
+			$isexport = 1;
+			$employee = Employee::where('status', 1)->get()->all();
+			$employee_name = $fullname.'-'.$request->month.'-'.$request->year.'.csv';
+
+			Session::flash('downloadexcel', 'downloadexcel');
+			Session::put('empname', $employee_name);
+
+			Session::flash('message', 'Employee sheet will download shortly');
+			Session::flash('alert-type', 'success');
+
+			//return Excel::download(new EmployeeExport(),'user.csv');
+
+			//return view('hr.employeelog.importpunch')->with(compact('employee', 'employeeid', 'month', 'year', 'isexport'));
+
+			return redirect()->route('importpunch');
+
+			}
+	    }
+
+	}
+
+	public function downloadexcel(){
+
+		$empname = session()->get('empname');
+
+		return Excel::download(new EmployeeExport(), $empname);
+
+	}
+
+
+
+	public function importemppunchcsv(Request $request){
+
+		$request->validate([
+
+			'file' => 'required|mimes:csv'
+
+		]);
+
+		$file = $request->file('file');
+
+		 // File Details 
+		$filename = $file->getClientOriginalName();
+		$extension = $file->getClientOriginalExtension();
+		$path = $file->getRealPath();
+		$fileSize = $file->getSize();
+		$mimeType = $file->getMimeType();
+
+		$valid_extension = array("csv");
+
+		$maxFileSize = 2097152; 
+
+		// Check file extension
+      	if(in_array(strtolower($extension),$valid_extension)){
+
+      		// Check file size
+      		if($fileSize <= $maxFileSize){
+
+      			$data = array_map('str_getcsv', file($path));
+      			//dd($data);
+      			foreach($data as $key => $csv_data){
+      				if($key != 0){
+
+      					$empid = $csv_data[0];
+      					$empname = $csv_data[1];
+      					$empdate = $csv_data[2];
+      					$empcheckin = $csv_data[3];
+      					$empcheckout = $csv_data[4];
+      					echo $empid.'<br/>';
+      					echo $empname.'<br/>';
+      					echo $empdate.'<br/>';
+      					echo $empcheckin.'<br/>';
+      					echo $empcheckout.'<br/>';
+      					//dd('stop');
+
+      					if(!empty($empid) && is_numeric($empid) && !empty($empdate) && strtotime($empdate) && !empty($empcheckin) &&  !empty($empcheckout)){
+
+      						$employeelog_exist = EmployeeLog::where('userid', $empid)->where('punchdate', date('Y-m-d', strtotime($empdate)))->where('checkin', 'like' , $empcheckin.'%')->where('checkout', 'like' , $empcheckout.'%')->first();
+
+      						if(empty($employeelog_exist)){
+
+	      						$employeelog = new EmployeeLog();
+	      						$employeelog->userid = $empid;
+	      						$employeelog->punchdate = date('Y-m-d', strtotime($empdate));
+	      						$employeelog->checkin = $empcheckin;
+	      						$employeelog->checkout = $empcheckout;
+	      						$employeelog->actionby = session()->get('admin_id');
+	      						$employeelog->save();
+
+	      					}
+      					}
+
+
+      				}
+      			}
+
+      			Session::flash('message', 'Employee punch is added successfully');
+      			Session::flash('alert-type', 'success');
+
+      			return redirect()->back();
+
+      		}
+
+      	}
+
+
+
+
+
+
+
+
+
+
+	}
+
+
+
+////////////////////////////////////////// import punch end/////////////////////////////////////////////////////////////
 
 }

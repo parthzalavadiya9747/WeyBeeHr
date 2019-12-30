@@ -85,6 +85,10 @@ Route::any('employeelog', 'HRController@employeelog')->name('employeelog');
 Route::any('storelog', 'HRController@storelog')->name('storelog');
 Route::any('addpunch/{id}', 'HRController@addpunch')->name('addpunch');
 Route::any('addemppunch', 'HRController@addemppunch')->name('addemppunch');
+Route::any('importpunch', 'HRController@importpunch')->name('importpunch');
+Route::any('downloaddemosheet', 'HRController@downloaddemosheet')->name('downloaddemosheet');
+Route::any('downloadexcel', 'HRController@downloadexcel')->name('downloadexcel');
+Route::any('importemppunchcsv', 'HRController@importemppunchcsv')->name('importemppunchcsv');
 ///////////////////////////// Employee log end ///////////////////////////////////////
 
 ///////////////////////////////////// Employee Leave start //////////////////////////////////////////////////////////////
