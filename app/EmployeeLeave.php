@@ -11,6 +11,6 @@ class EmployeeLeave extends Model
 
     public function empname(){
 
-    	return $this->hasOne('App\employee', 'employeeid', 'employeeid');
+    	return $this->hasOne('App\Employee', 'employeeid', 'employeeid');
     }
 }

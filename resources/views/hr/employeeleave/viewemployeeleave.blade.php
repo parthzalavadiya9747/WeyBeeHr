@@ -112,9 +112,6 @@
                                         </tbody>
 
                                     </table>
-                                    @if(!empty($employeeleave))
-                                    <center>{{ $employeeleave->render() }}</center>
-                                    @endif
                                 </div>
                                 </div>
                                 <!-- /.box-body -->

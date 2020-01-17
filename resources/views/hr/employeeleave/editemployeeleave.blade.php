@@ -83,6 +83,22 @@
                                                  </div>
 
                                                  <div class="form-group">
+                                                   <label>Type<span style="color: red;">*</span></label>
+                                                   <select class="form-control" placeholder="Select Leave Type" name="leavetype" required="">
+                                                    <option value="">--Select Leave Type--</option>
+                                                    <option value="CHl" @if($empleave->leavetype == 'CHl') selected="" @endif>Half Casual Leave</option>
+                                                    <option value="Cl" @if($empleave->leavetype == 'Cl') selected="" @endif>Casual Leave</option>
+                                                    <option value="Ml" @if($empleave->leavetype == 'Ml') selected="" @endif>Medical Leave</option>
+                                                    <option value="Pl" @if($empleave->leavetype == 'Pl') selected="" @endif>Paid Leave</option>
+                                                </select>
+                                                @if($errors->has('leavedate')) 
+                                                <span class="help-block">
+                                                  <strong>{{ $errors->first('leavedate') }}</strong>
+                                              </span>
+                                              @endif
+                                          </div>
+
+                                                 <div class="form-group">
                                                      <label>Reason</label>
                                                      <textarea name="reason" class="form-control">{{ $empleave->reason }}</textarea>
                                                      @if($errors->has('reason'))

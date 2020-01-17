@@ -2,10 +2,6 @@
 
 @section('title', 'Add Employee')
 
-@push('css')
-<link rel="stylesheet" type="text/css" href="{{ asset('css/validate.css') }}">
-@endpush
-
 @section('content')
 @if ($errors->any())
         {{ implode('', $errors->all('<div>:message</div>')) }}
@@ -233,7 +229,7 @@
 											<div class="col-md-6">
 												<div class="form-group">
 													<label>Working Hour(Per Day)<span style="color: red;">*</span></label>
-													<input type="text" name="workinghour" placeholder="Enter Working Hour" class="form-control number" maxlength="2" max="24" required="" value="{{ old('workinghour') }}" autocomplete="off">
+													<input type="text" name="workinghour" placeholder="Enter Working Hour" class="form-control workinghourdigit" maxlength="5" max="24" required="" value="{{ old('workinghour') }}" autocomplete="off">
 													@if($errors->has('workinghour'))
 													<span class="help-block">
 														<strong>{{ $errors->first('workinghour') }}</strong>
@@ -485,6 +481,16 @@
 				}
 			});
 
+		});
+
+		$(".workinghourdigit").keypress(function (evt) {
+		    
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (charCode != 46 && charCode > 31 
+				&& (charCode < 48 || charCode > 57))
+				return false;
+
+			return true;
 		});
 	</script>
 

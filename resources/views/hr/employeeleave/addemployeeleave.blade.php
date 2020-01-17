@@ -88,6 +88,7 @@
                                                      <label>Type<span style="color: red;">*</span></label>
                                                      <select class="form-control" placeholder="Select Leave Type" name="leavetype" required="">
                                                         <option value="">--Select Leave Type--</option>
+                                                        <option value="CHl" @if(old('leavetype') == 'CHl') selected="" @endif>Half Casual Leave</option>
                                                         <option value="Cl" @if(old('leavetype') == 'Cl') selected="" @endif>Casual Leave</option>
                                                         <option value="Ml" @if(old('leavetype') == 'Ml') selected="" @endif>Medical Leave</option>
                                                         <option value="Pl" @if(old('leavetype') == 'Pl') selected="" @endif>Paid Leave</option>
