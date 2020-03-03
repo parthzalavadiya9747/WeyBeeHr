@@ -114,19 +114,19 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Present Days</label>
-                                                            <input type="text" name="attenddays_display" oninput="caldays('pday', this.value)" id="attenddays" class="form-control number" value="{{ $salary->attenddays }}" required="" min="1" autocomplete="off">
+                                                            <input type="text" name="attenddays_display" oninput="caldays('pday', this.value)" id="attenddays" class="form-control" value="{{ $salary->attenddays }}" required="" min="1" autocomplete="off">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Absent Days</label>
-                                                            <input type="text" name="takenleave_display" id="takenleave" class="form-control number" oninput="caldays('takenleave', this.value)" value="{{ $salary->takenleave }}" required="" autocomplete="off">
+                                                            <input type="text" name="takenleave_display" id="takenleave" class="form-control " oninput="caldays('takenleave', this.value)" value="{{ $salary->takenleave }}" required="" autocomplete="off">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" style="margin-top: 25px;">
                                                         <div class="form-group">
                                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#punch">Punch</button>
-                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#worktime">Worktime</button>
+                                                            {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#worktime">Worktime</button> --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -162,17 +162,17 @@
                                                                 <tr>
                                                                     <td>Casual Leave</td>
                                                                     @php $casualleave = !empty($salary->casualleave) ? $salary->casualleave : 0 @endphp
-                                                                    <td><input type="no" name="casualleave" id="casualleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off" value="{{ $casualleave }}"></td>
+                                                                    <td><input type="no" name="casualleave" id="casualleave" class="form-controller " min="0" max="31" maxlength="4" autocomplete="off" value="{{ $casualleave }}"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Medical Leave</td>
                                                                     @php $medicalleave = !empty($salary->medicalleave) ? $salary->medicalleave : 0 @endphp
-                                                                    <td><input type="no" name="medicalleave" id="medicalleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off" value="{{ $medicalleave }}"></td>
+                                                                    <td><input type="no" name="medicalleave" id="medicalleave" class="form-controller " min="0" max="31" maxlength="4" autocomplete="off" value="{{ $medicalleave }}"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Paid Leave</td>
                                                                     @php $paidleave = !empty($salary->paidleave) ? $salary->paidleave : 0 @endphp
-                                                                    <td><input type="no" name="paidleave" id="paidleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off" value="{{ $paidleave }}"></td>
+                                                                    <td><input type="no" name="paidleave" id="paidleave" class="form-controller" min="0" max="31" maxlength="4" autocomplete="off" value="{{ $paidleave }}"></td>
                                                                 </tr>
                                                             </table>
                                                         </div>

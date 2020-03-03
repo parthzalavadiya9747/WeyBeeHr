@@ -113,7 +113,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Present Days</label>
-                                                            <input type="text" name="attenddays_display" oninput="caldays('pday', this.value)" id="attenddays" class="form-control number" value="{{ $attenddays }}" required="" autocomplete="off">
+                                                            <input type="text" name="attenddays_display" oninput="caldays('pday', this.value)" id="attenddays" class="form-control" value="{{ $attenddays }}" required="" autocomplete="off">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -150,7 +150,7 @@
                                                 </div>
 
 
-                                                @if($leavedays_cal > 0)
+                                                
                                                     <div class="row" id="leavereport">
                                                         <div class="col-md-3"></div>
                                                         <div class="col-md-6">
@@ -161,21 +161,21 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Casual Leave</td>
-                                                                    <td><input type="no" name="casualleave" id="casualleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off"></td>
+                                                                    <td><input type="no" name="casualleave" id="casualleave" class="form-controller " min="0" max="31" maxlength="4" autocomplete="off"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Medical Leave</td>
-                                                                    <td><input type="no" name="medicalleave" id="medicalleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off"></td>
+                                                                    <td><input type="no" name="medicalleave" id="medicalleave" class="form-controller " min="0" max="31" maxlength="4" autocomplete="off"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Paid Leave</td>
-                                                                    <td><input type="no" name="paidleave" id="paidleave" class="form-controller number" min="0" max="31" maxlength="2" autocomplete="off"></td>
+                                                                    <td><input type="no" name="paidleave" id="paidleave" class="form-controller " min="0" max="31" maxlength="4" autocomplete="off"></td>
                                                                 </tr>
                                                             </table>
                                                         </div>
                                                         <div class="col-md-3"></div>
                                                     </div>
-                                                @endif
+                                                
 
                                                  {{-- <div class="row">
                                                     
@@ -420,6 +420,7 @@ function caldays(type,val)
     let totalleave= 0;
 
     let leftdays = Number(actualdays) - Number(val);
+    //console.log(leftdays);return;
     let totaldays = Number(leftdays) + Number(val);
     $('#casualleave').val('');
     $('#medicalleave').val('');

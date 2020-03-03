@@ -43,8 +43,7 @@ class EmployeeController extends Controller
         $employeeid = $user->employeeid;
         $photo = $user->photo;
 
-        
-       
+    
         if($username == $user_username && Hash::check($password, $user_password)){
 
          session()->put('logged_email', $user_email);
@@ -138,7 +137,7 @@ class EmployeeController extends Controller
                 'addressline2' => 'nullable|max:255',
     			'department' => 'required|max:255',
     			'salary' => 'required|numeric|digits_between:1,8',
-    			'workinghour' => 'required|numeric|digits_between:1,2',
+    			'workinghour' => 'required|numeric',
     			'department' => 'nullable|max:255',
     			'dob' => 'nullable|date',
     			'mobileno' => 'required|digits_between:1,10|unique:employee,mobileno',
@@ -270,7 +269,7 @@ class EmployeeController extends Controller
                 'addressline2' => 'nullable|max:255',
     			'department' => 'nullable|max:255',
     			'salary' => 'required|numeric|digits_between:1,8',
-    			'workinghour' => 'required|numeric|digits_between:1,2',
+    			'workinghour' => 'required|numeric',
     			'department' => 'nullable|max:255',
     			'dob' => 'nullable|date',
     			'mobileno' => ['required','digits_between:1,10', Rule::unique('employee')->ignore($id, 'employeeid')],
@@ -285,8 +284,8 @@ class EmployeeController extends Controller
 
     		]);
 
-            DB::beginTransaction();
-            try {
+           /* DB::beginTransaction();
+            try {*/
 
         		if(!empty($request->password)){
 
@@ -343,7 +342,7 @@ class EmployeeController extends Controller
 
         		return redirect()->route('viewemployee');
 
-            } catch(\Exception $e) {
+            /*} catch(\Exception $e) {
 
                 Helper::errormail('Employee', 'Edit Employee', 'High');
 
@@ -353,7 +352,7 @@ class EmployeeController extends Controller
 
             if($success == false){
                 return redirect('dashboard');
-            }
+            }*/
 
     	}
 

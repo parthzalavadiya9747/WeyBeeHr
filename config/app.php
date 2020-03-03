@@ -163,6 +163,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         
 
         /*
@@ -231,6 +232,7 @@ return [
         'Curl' => Ixudra\Curl\Facades\Curl::class,
         'Helper' => App\Helpers\Helper::class,
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
 
     ],
