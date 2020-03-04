@@ -103,7 +103,7 @@
                                                             Half Casual Leave
                                                           @elseif($employee->leavetype == 'Cl')
                                                             Casual Leave
-                                                          @elseif($employee->leavetype == 'ML')
+                                                          @elseif($employee->leavetype == 'Ml')
                                                             Medical Leave
                                                           @elseif($employee->leavetype == 'PL')
                                                             Paid Leave
