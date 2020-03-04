@@ -90,6 +90,7 @@
                                                     <option value="Cl" @if($empleave->leavetype == 'Cl') selected="" @endif>Casual Leave</option>
                                                     <option value="Ml" @if($empleave->leavetype == 'Ml') selected="" @endif>Medical Leave</option>
                                                     <option value="Pl" @if($empleave->leavetype == 'Pl') selected="" @endif>Paid Leave</option>
+                                                    <option value="Other" @if($empleave->leavetype == 'Other') selected="" @endif>Other</option>
                                                 </select>
                                                 @if($errors->has('leavedate')) 
                                                 <span class="help-block">
