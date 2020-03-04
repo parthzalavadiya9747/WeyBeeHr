@@ -80,6 +80,7 @@
                                                 <th>#</th>
                                                 <th>Name</th>
                                                 <th>Date</th>
+                                                <th>Leave Type</th>
                                                 <th>Reason</th>
                                                 <th>Action</th>
                                             </tr>
@@ -97,6 +98,19 @@
                                                         @endphp
                                                         <td>{{ $fname }} {{ $lname }}</td>
                                                         <td>{{ date('d-m-Y', strtotime($employee->date)) }}</td>
+                                                        <td>
+                                                          @if($employee->leavetype == 'CHl')
+                                                            Half Casual Leave
+                                                          @elseif($employee->leavetype == 'Cl')
+                                                            Casual Leave
+                                                          @elseif($employee->leavetype == 'ML')
+                                                            Medical Leave
+                                                          @elseif($employee->leavetype == 'PL')
+                                                            Paid Leave
+                                                          @elseif($employee->leavetype == 'Other')
+                                                            Other
+                                                          @endif
+                                                        </td>
                                                         <td>{{ $employee->reason }}</td>
                                                         <td>
                                                             <a href="{{ route('editemployeeleave', $employee->employeeleaveid) }}" title="edit"><i class="fa fa-edit"></i></a>
